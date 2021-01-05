@@ -2,6 +2,13 @@
 // добавлять любые переменные и модели
 // ваша задача реализовать так, как показано на видео, чтобы оно работало
 
+const BUTTONS = {
+  back: 'НАЗАД',
+  forward: 'ВПЕРЕД',
+  end: 'ЗАКОНЧИТЬ',
+  reset: 'НАЧАТЬ ЗАНОВО'
+}
+
 const App = {
   data() {
     return {
@@ -32,32 +39,54 @@ const App = {
           text:
             'Одним из наиболее важных обновлений в Vue 3 является появление альтернативного синтаксиса Composition API. В этом блоке вы узнаете все, чтобы полностью пользоваться данными синтаксисом на практических примерах. Помимо этого вы узнаете как работать совместно с Vue Router и Vuex.'
         }
-      ]
+      ],
+      resetStepper: false
     }
   },
   methods: {
     prev() {
       // когда нажимаем кнопку назад
+      this.activeIndex--
     },
     reset() {
       // начать заново
+      this.activeIndex = 0
+      this.resetStepper = false
     },
-    nextOfFinish() {
+    nextOfFinish(event) {
       // кнопка вперед или закончить
+      if (event.target.outerText === this.getButtonText('end')) {
+        this.resetStepper = true
+      } else {
+        this.activeIndex++
+      }
     },
     setActive(idx) {
       // когда нажимаем на определенный шаг
+      this.activeIndex = idx
+    },
+    getButtonText(button) {
+      return BUTTONS[button]
     }
   },
   computed: {
-    getActiveStepText() {
-      const activeStep = this.steps[this.activeIndex]
-      return activeStep.text
-    }
     // тут стоит определить несколько свойств:
     // 1. текущий выбранный шаг
     // 2. выключена ли кнопка назад
     // 3. находимся ли мы на последнем шаге
+
+    getActiveStepText() {
+      const activeStep = this.steps[this.activeIndex]
+      return activeStep.text
+    },
+    getForwardOrFinishText() {
+      return this.activeIndex === 4
+        ? this.getButtonText('end')
+        : this.getButtonText('forward')
+    },
+    isBackDisabled() {
+      return this.activeIndex === 0
+    }
   }
 }
 
